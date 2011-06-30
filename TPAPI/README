@@ -1,0 +1,58 @@
+Installation
+------------
+
+1. Copy TPAPI dir to app.extensions
+2. Add these lines to config/main.php
+	'import'=>array(
+		...
+		'ext.TPAPI.*',
+	),
+	...
+	'components'=>array(
+		...
+		// for simple authentication
+		'api'=>array(
+			'class'=>'ext.TPAPI.CTPerformant',
+			'connection'=>array(
+				'type'=>'simple',
+				'user'=>'YOUR USERNAME',
+				'pass'=>'YOUR PASSWORD',
+				'api_url'=>'api.YOUR_NETWORK.COM',
+			),
+		),
+		
+		// for OAuth
+		'api'=>array(
+			'class'=>'ext.TPAPI.CTPerformant',
+			'connection'=>array(
+				'type'=>'oauth',
+				'key'=>'YOUR APP KEY',
+				'secret'=>'YOUR APP SECRET',
+				'instanceClass'=>'YourInstanceClass', // see below for details
+			),
+		),
+	),
+
+3. [For OAuth apps only. If you're using simple authentication, you're done.]
+
+Register an app on http://apps.2performant.com/. Make sure to give it user read permission.
+
+4. Copy the files in TPAPI/user to their appropriate locations in the application dir. E.g.
+protected/extensions/TPAPI/user/controllers/AppController.php -> protected/controllers/AppController.php
+protected/extensions/TPAPI/user/models/Instance.php -> protected/models/Instance.php
+ 
+ Feel free to rename the classes and their respective files according to the Yii Framework conventions.
+ 
+5. Create a table to store instances based on the schema in TPAPI/user/data/instances.sql. Rename the table as you wish.
+ 
+6. Modify the YourInstanceClass::tableName() method according to the name of the table you just created.
+
+7. Modify 'Instance' in config/main.php components > api > connection > instanceClass according to the name of the class in the Instance.php copy you just made.
+
+8. Modify key and secret in config/main.php components > api > connection
+
+
+Usage
+-----
+
+Just call Yii::app()->api->api_method($params) anywhere in the application.
