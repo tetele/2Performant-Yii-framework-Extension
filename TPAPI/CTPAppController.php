@@ -17,7 +17,7 @@ class CTPAppController extends Controller
 	}
 	
 	public function actionCallback() {
-		Yii::app()->api->oauthCallback();
+		Yii::app()->api->oauthCallback($this->callbackUrl);
 	}
 	
 	public function actionDelete() {
