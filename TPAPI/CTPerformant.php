@@ -5,6 +5,8 @@ ini_set(
   dirname(__FILE__) . '/2Performant' . PATH_SEPARATOR . dirname(__FILE__) . '/2Performant/PEAR' . PATH_SEPARATOR . ini_get( 'include_path' )
 );
 
+require_once 'TPerformant.php';
+
 class CTPerformant extends CApplicationComponent
 {
 	private $_api = null;
@@ -17,9 +19,9 @@ class CTPerformant extends CApplicationComponent
 	
 	private $_instanceClass = null;
 	
-	private function getTPerformant() {
-		if($this->_api === null) {
-			$network = 'http://' . ($this->_authType == 'oauth' ? $this->instance->network : $this->_network);
+	private function getTPerformant($new = false) {
+		if($this->_api === null || $new) {
+			$network = 'http://' . ($this->_authType == 'oauth' ? $this->instance->network->network : $this->_network);
 			$this->_api = new TPerformant( $this->_authType, $this->_authObject, $network );
 			$this->_userInfo = $this->_api->user_loggedin();
 		}
@@ -28,6 +30,10 @@ class CTPerformant extends CApplicationComponent
 	
 	public function getApi() {
 		return $this->getTPerformant();
+	}
+	
+	public function reloadApi() {
+		return $this->getTPerformant(true);
 	}
 	
 	public function setConnection( $connection ) {

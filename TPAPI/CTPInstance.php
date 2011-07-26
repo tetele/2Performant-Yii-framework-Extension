@@ -7,10 +7,10 @@
  * @property integer $id
  * @property string $token
  * @property string $secret
- * @property string $network
+ * @property string $network_id
  * @property string $public_token
  */
-class CTPInstance extends CActiveRecord
+abstract class CTPInstance extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -32,12 +32,13 @@ class CTPInstance extends CActiveRecord
 			array('token, secret, network', 'required'),
 			array('token', 'length', 'max'=>20),
 			array('secret', 'length', 'max'=>40),
-			array('network', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, token, secret, network, public_token', 'safe', 'on'=>'search'),
+			array('id, token, secret, public_token', 'safe', 'on'=>'search'),
 		);
 	}
+	
+	abstract protected function networkClassName();
 
 	/**
 	 * @return array relational rules.
@@ -47,6 +48,7 @@ class CTPInstance extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'network'=>array(self::BELONGS_TO, $this->networkClassName(), 'network_id'),
 		);
 	}
 
@@ -59,9 +61,25 @@ class CTPInstance extends CActiveRecord
 			'id' => 'ID',
 			'token' => 'Token',
 			'secret' => 'Secret',
-			'network' => 'Network',
 			'public_token' => 'Public Token',
 		);
+	}
+	
+	public function setNetwork($value) {
+		$networkClass = new ReflectionClass($this->networkClassName());
+		$modelMethod = new ReflectionMethod($this->networkClassName(), 'model');
+		$model = $modelMethod->invoke(null);
+		$network = $model->findByAttributes(array(
+			'network'=>$value,
+		));
+		
+		if(!$network) {
+			$network = $networkClass->newInstance();
+			$network->network = $value;
+			$network->save();
+		}
+		
+		$this->network_id = $network->id;
 	}
 
 	/**
