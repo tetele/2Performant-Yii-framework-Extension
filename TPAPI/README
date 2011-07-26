@@ -11,7 +11,7 @@ Installation
 	'components'=>array(
 		...
 		// for simple authentication
-		'api'=>array(
+		'tpapi'=>array(
 			'class'=>'ext.TPAPI.CTPerformant',
 			'connection'=>array(
 				'type'=>'simple',
