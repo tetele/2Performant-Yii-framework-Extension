@@ -1,6 +1,6 @@
 <?php 
 
-class TPNetwork extends CActiveRecord {
+class CTPNetwork extends CActiveRecord {
 /**
 	 * Returns the static model of the specified AR class.
 	 * @return Instance the static model class
