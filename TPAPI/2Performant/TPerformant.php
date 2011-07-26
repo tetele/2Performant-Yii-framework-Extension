@@ -941,7 +941,7 @@ class TPerformant {
 		$returned = json_decode($response);
 		$result = null;
 		
-		if(!$returned)
+		if($returned === false)
 			throw new TPException_Connection($this, 'Unable to parse response from API', null, $response);
 		if(isset($returned->error))
 			throw new TPException_API($this, $returned->error, null, array('request'=>array($url, $send, $method, $where),'response'=>$response));
