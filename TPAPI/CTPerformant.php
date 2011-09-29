@@ -152,13 +152,15 @@ class CTPerformant extends CApplicationComponent
 		$instance->attributes = array(
 			'token' => $consumer->getToken(),
 			'secret' => $consumer->getTokenSecret(),
-			'network' => $session['network'],
 		);
+		$instance->setNetwork($session['network']);
 		
 		$saved = $instance->save();
 		if($saved) {
 			header("Location: http://".$network."/oauth_clients/show?token=". $consumer->getToken());
 			Yii::app()->end();
+		} else {
+			throw new CException('Unable to save application instance');
 		}
 	}
 	

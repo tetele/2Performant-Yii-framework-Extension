@@ -29,7 +29,8 @@ abstract class CTPInstance extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('token, secret, network', 'required'),
+			array('token, secret, network_id', 'required'),
+			array('network', 'safe'),
 			array('token', 'length', 'max'=>20),
 			array('secret', 'length', 'max'=>40),
 			// The following rule is used by search().
