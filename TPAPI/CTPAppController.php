@@ -3,7 +3,7 @@
 class CTPAppController extends Controller
 {
 	public function getCallbackUrl() {
-		return $this->createAbsoluteUrl('app/callback');
+		return $this->createAbsoluteUrl('callback');
 	}
 	
 	/**
