@@ -1,13 +1,13 @@
 <?php
 /* ================================
    2Performant.com Network API 
-   ver. 0.4.5
+   ver. 0.5
    http://help.2performant.com/API
    ================================ */
 
 ini_set(
   'include_path',
-   "PEAR/" . PATH_SEPARATOR . ini_get( 'include_path' )
+   dirname(__FILE__) . '/PEAR' . PATH_SEPARATOR . dirname(__FILE__) . PATH_SEPARATOR . ini_get( 'include_path' )
 );
 
 require 'PEAR.php';
@@ -259,7 +259,7 @@ class TPerformant {
 
         /* Affiliates: Destroy a site */
         function site_destroy($site_id) {
-                return $this->hook("/sites/{$site_id}.json", "site", $request, 'DELETE');
+                return $this->hook("/sites/{$site_id}.json", "site", null, 'DELETE');
         }
 
         /*============*/
@@ -576,7 +576,7 @@ class TPerformant {
                 foreach($options as $key => $value)
                   $request[$key] = $value;
 
-                return $this->hook("/stats/trend_conversion.json", "stats", null, "GET");
+                return $this->hook("/stats/trend_conversion.json", "stats", $request, "GET");
         }
 
         /* Commissions Amount */
@@ -587,7 +587,7 @@ class TPerformant {
                 foreach($options as $key => $value)
                   $request[$key] = $value;
 
-                return $this->hook("/stats/trend_commissions_amount.json", "stats", null, "GET");
+                return $this->hook("/stats/trend_commissions_amount.json", "stats", $request, "GET");
         }
 
         /* Clicks */
@@ -598,7 +598,7 @@ class TPerformant {
                 foreach($options as $key => $value)
                   $request[$key] = $value;
 
-                return $this->hook("/stats/trend_clicks.json", "stats", null, "GET");
+                return $this->hook("/stats/trend_clicks.json", "stats", $request, "GET");
         } 
 
         /* Unique Visitors */
@@ -609,7 +609,7 @@ class TPerformant {
                 foreach($options as $key => $value)
                   $request[$key] = $value;
 
-                return $this->hook("/stats/trend_visitors.json", "stats", null, "GET");
+                return $this->hook("/stats/trend_visitors.json", "stats", $request, "GET");
         }
 
 	/* Actions (Leads + Sales) */
@@ -620,7 +620,7 @@ class TPerformant {
                 foreach($options as $key => $value)
                   $request[$key] = $value;
 
-                return $this->hook("/stats/trend_actions.json", "stats", null, "GET");
+                return $this->hook("/stats/trend_actions.json", "stats", $request, "GET");
         }
 
         /* Sales Amount */
@@ -631,7 +631,7 @@ class TPerformant {
                 foreach($options as $key => $value)
                   $request[$key] = $value;
 
-                return $this->hook("/stats/trend_sales_amount.json", "stats", null, "GET");
+                return $this->hook("/stats/trend_sales_amount.json", "stats", $request, "GET");
         }
 
         /* EPC */
@@ -642,7 +642,7 @@ class TPerformant {
                 foreach($options as $key => $value)
                   $request[$key] = $value;
 
-                return $this->hook("/stats/trend_epc.json", "stats", null, "GET");
+                return $this->hook("/stats/trend_epc.json", "stats", $request, "GET");
         }
 
 
@@ -655,7 +655,7 @@ class TPerformant {
                 $request['page']      = $page;
                 $request['perpage']   = $perpage;
 
-                return $this->hook("/messages.json", "message", null, "GET");
+                return $this->hook("/messages.json", "message", $request, "GET");
         }
 
         /* List sent messages. Displays the first 6 entries by default. */
@@ -663,7 +663,7 @@ class TPerformant {
                 $request['page']      = $page;
                 $request['perpage']   = $perpage;
 
-                return $this->hook("/messages/sent.json", "message", null, "GET");
+                return $this->hook("/messages/sent.json", "message", $request, "GET");
         }
 
         /* Display information about a message */
@@ -700,6 +700,11 @@ class TPerformant {
                 $request['search']  = $search;
 
                 return $this->hook("/affiliate_invoices/search.json", "affiliate_invoice", $request, 'POST', 'admin');
+        }
+
+        /* Show an Affiliate Invoice */
+        function admin_affiliate_invoice_show($invoice_id) {
+                return $this->hook("/users/all/affiliate_invoices/$invoice_id.json", "affiliate_invoice", array(), 'GET', 'admin');
         }
 
         /* Create an Affiliate Invoice */
@@ -743,6 +748,11 @@ class TPerformant {
                 $request['search']  = $search;
 
                 return $this->hook("/advertiser_invoices/search.json", "advertiser_invoice", $request, 'POST', 'admin');
+        }
+        
+        /* Show an Advertiser Invoice */
+        function admin_advertiser_invoice_show($invoice_id) {
+                return $this->hook("/users/all/advertiser_invoices/$invoice_id.json", "advertiser_invoice", array(), 'GET', 'admin');
         }
 
         /* Create an Advertiser Invoice */
@@ -941,7 +951,7 @@ class TPerformant {
 		$returned = json_decode($response);
 		$result = null;
 		
-		if($returned === false)
+		if($returned === NULL)
 			throw new TPException_Connection($this, 'Unable to parse response from API', null, $response);
 		if(isset($returned->error))
 			throw new TPException_API($this, $returned->error, null, array('request'=>array($url, $send, $method, $where),'response'=>$response));
@@ -976,7 +986,11 @@ class TPerformant {
 	}
 
         function simpleHttpRequest($url, $params, $method) {
-                $req = new HTTP_Request2($url, $method, array ('ssl_verify_peer' => false, 'ssl_verify_host' => false));
+                $req = new HTTP_Request2($url, $method, array (
+                        'ssl_verify_peer' => false,
+                        'ssl_verify_host' => false,
+                        'follow_redirects' => true
+                ));
 
                 //authorize
                 $req->setAuth($this->user, $this->pass);
