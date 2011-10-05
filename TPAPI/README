@@ -61,3 +61,7 @@ Usage
 -----
 
 Just call Yii::app()->tpapi->api_method($params) anywhere in the application.
+
+If you are using the admin API, you need to set the 'protocol'=>'https' component config param.
+
+For profiling information (http://www.yiiframework.com/doc/guide/1.1/en/topics.logging#performance-profiling), set 'enableProfiling'=>true on component configuration.

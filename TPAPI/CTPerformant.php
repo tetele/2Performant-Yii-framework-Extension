@@ -11,6 +11,9 @@ class CTPerformant extends CApplicationComponent
 {
 	private $_api = null;
 	
+	private $_protocol = 'http';
+	private $_enableProfiling = false;
+	
 	private $_authType = null;
 	private $_authObject = null;
 	private $_network = null;
@@ -21,7 +24,7 @@ class CTPerformant extends CApplicationComponent
 	
 	private function getTPerformant($new = false) {
 		if($this->_api === null || $new) {
-			$network = 'http://' . ($this->_authType == 'oauth' ? $this->instance->network->network : $this->_network);
+			$network = $this->_protocol . '://' . ($this->_authType == 'oauth' ? $this->instance->network->network : $this->_network);
 			$this->_api = new TPerformant( $this->_authType, $this->_authObject, $network );
 			$this->_userInfo = $this->_api->user_loggedin();
 		}
@@ -78,6 +81,15 @@ class CTPerformant extends CApplicationComponent
 				}
 			}
 		}
+	}
+	
+	public function setProtocol($value) {
+		if(in_array($value, array('http','https')))
+			$this->_protocol = $value;
+	}
+	
+	public function setEnableProfiling($value) {
+		$this->_enableProfiling = (bool) $value;
 	}
 	
 	public function getOauth() {
@@ -227,6 +239,7 @@ class CTPerformant extends CApplicationComponent
 	}
 	
 	public function __call( $name, $args = null ) {
+		$this->_enableProfiling && Yii::beginProfile($name, 'ext.TPAPI');
 		if($this->caching && $this->isCacheable($name)) {
 			$key = md5(serialize($args));
 			$result = Yii::app()->cache->get($key); 
@@ -239,6 +252,7 @@ class CTPerformant extends CApplicationComponent
 		} else {
 			$result = call_user_func_array(array($this->api, $name), $args);
 		}
+		$this->_enableProfiling && Yii::endProfile($name, 'ext.TPAPI');
 		
 		return $result;
 	}
