@@ -1,8 +1,9 @@
 Installation
 ------------
 
-1. Copy TPAPI dir to app.extensions
-2. Add these lines to config/main.php
+1. Make a TPAPI directory in app.extensions
+2. Copy everything to app.extensions.TPAPI
+3. Add these lines to config/main.php
 	'import'=>array(
 		...
 		'ext.TPAPI.*',
@@ -33,28 +34,28 @@ Installation
 		),
 	),
 
-3. [For OAuth apps only. If you're using simple authentication, you're done.]
+4. [For OAuth apps only. If you're using simple authentication, you're done.]
 
 Register an app on http://apps.2performant.com/. Make sure to give it user read permission.
 
-4. Copy the files in TPAPI/user to their appropriate locations in the application dir. E.g.
+5. Copy the files in TPAPI/user to their appropriate locations in the application dir. E.g.
 protected/extensions/TPAPI/user/controllers/AppController.php -> protected/controllers/AppController.php
 protected/extensions/TPAPI/user/models/Instance.php -> protected/models/Instance.php
 protected/extensions/TPAPI/user/models/Network.php -> protected/models/Network.php
  
  Feel free to rename the classes and their respective files according to the Yii Framework conventions.
  
-5. Create a table to store instances based on the schema in TPAPI/user/data/instances.sql. Rename the table as you wish.
+6. Create a table to store instances based on the schema in TPAPI/user/data/instances.sql. Rename the table as you wish.
 
-6. Do the same for the networks table in TPAPI/user/data/networks.sql
+7. Do the same for the networks table in TPAPI/user/data/networks.sql
  
-7. Modify the YourInstanceClass::tableName() and YourNetworkClass::tableName() methods according to the names of the tables you just created.
+8. Modify the YourInstanceClass::tableName() and YourNetworkClass::tableName() methods according to the names of the tables you just created.
 
-8. Modify the YourInstanceClass::networkClassName() method according to the name of the copy you created.
+9. Modify the YourInstanceClass::networkClassName() method according to the name of the copy you created.
 
-9. Modify 'Instance' in config/main.php components > api > connection > instanceClass according to the name of the class in the Instance.php copy you just made.
+10. Modify 'Instance' in config/main.php components > api > connection > instanceClass according to the name of the class in the Instance.php copy you just made.
 
-10. Modify key and secret in config/main.php components > api > connection
+11. Modify key and secret in config/main.php components > api > connection
 
 
 Usage
